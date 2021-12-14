@@ -1,5 +1,4 @@
 import inquirer from "inquirer";
-const emailValidator = require('email-validator');
 
 async function newPlayer() {
       
@@ -16,7 +15,6 @@ async function newPlayer() {
                 message: "Email",
                 validate: function(email)
                 {
-                    // Regex mail check (return true if valid mail)
                     return /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()\.,;\s@\"]+\.{0,1})+([^<>()\.,;:\s@\"]{2,}|[\d\.]+))$/.test(email);
                 }
             },
@@ -44,7 +42,7 @@ async function start() {
                     newPlayer();
                     break;
                 case 'Commencer':
-                    startGame();
+                    newGame();
                     break;
             }
         });
@@ -136,4 +134,4 @@ async function selectPlayers(nbPlayers: Number){
         })
 }
 
-newGame()
+start()
