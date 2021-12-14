@@ -1,7 +1,12 @@
 import inquirer from "inquirer";
+import Player from './player'
 
 export default class Engine {
-    players: Array<string> = ["Player1", "Player2", "Player3", "Player4", "Player5", "Player6"];
+    players: Array<Player> = [];
+
+   addPlayer(player: Player): void {
+    this.players.push(player)
+   } 
 
     async start(): Promise<void>{
         await inquirer
@@ -44,6 +49,7 @@ export default class Engine {
                 },
             ])
             .then(answer => {
+                this.addPlayer(new Player(answer.player_name, answer.player_mail))
                 console.log(`Nouveau joueur : ${answer.player_name}, mail : ${answer.player_mail}`)
                 this.start();
             }
