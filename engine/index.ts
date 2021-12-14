@@ -1,7 +1,57 @@
 import inquirer from "inquirer";
+const emailValidator = require('email-validator');
+
+async function newPlayer() {
+      
+    await inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'player_name',
+                message: 'Nom du joueur',
+            },
+            {
+                type: "input",
+                name: "player_mail",
+                message: "Email",
+                validate: function(email)
+                {
+                    // Regex mail check (return true if valid mail)
+                    return /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()\.,;\s@\"]+\.{0,1})+([^<>()\.,;:\s@\"]{2,}|[\d\.]+))$/.test(email);
+                }
+            },
+        ])
+        .then(answer => {
+            console.log(`Nouveau joueur : ${answer.player_name}, mail : ${answer.player_mail}`)
+            start();
+        }
+        )
+    }
+
+async function start() {
+    await inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'init',
+                message: 'Bienvenue, merci de bien vouloir entregistrer les nouveaux joueurs avant de lancer une partie',
+                choices: ['Nouveau joueur', 'Commencer']
+            },
+        ])
+        .then(answers => {
+            switch (answers.init) {
+                case 'Nouveau joueur':
+                    newPlayer();
+                    break;
+                case 'Commencer':
+                    startGame();
+                    break;
+            }
+        });
+}
 
 
-async function start301(){
+async function start301() {
     await inquirer
         .prompt([
             {
@@ -12,7 +62,7 @@ async function start301(){
             },
         ])
         .then(answers => {
-            switch(answers.status){
+            switch (answers.status) {
                 case 'start':
                     console.info(`The game is started`);
                     break;
@@ -23,7 +73,7 @@ async function start301(){
         });
 }
 
-async function startGame(){
+async function startGame() {
     await inquirer
         .prompt([
             {
@@ -34,7 +84,7 @@ async function startGame(){
             },
         ])
         .then(answers => {
-            switch(answers.game){
+            switch (answers.game) {
                 case 'Tour du Monde':
                     console.info(`You start Tour du Monde.`);
                     break;
@@ -48,4 +98,4 @@ async function startGame(){
         });
 }
 
-startGame()
+start()

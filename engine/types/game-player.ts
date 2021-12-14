@@ -1,7 +1,7 @@
 export interface GamePlayer {
-    id?: number | string
-    playerId: number | string
-    gameId: number | string
+    id?: string
+    playerId: string
+    gameId: string
     remainingShots: number | null
     score: number
     rank: null | number
