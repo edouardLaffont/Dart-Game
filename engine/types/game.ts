@@ -1,8 +1,8 @@
 export interface Game  {
-  id: number | string
+  id: string
   mode: 'around-the-world' | '301' | 'cricket'
   name: string
-  currentPlayerId: null | string | number
+  currentPlayerId: null | string 
   status: 'draft' | 'started' | 'ended'
   createdAt: Date
 };

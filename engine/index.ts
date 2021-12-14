@@ -1,4 +1,54 @@
 import inquirer from "inquirer";
+const emailValidator = require('email-validator');
+
+async function newPlayer() {
+      
+    await inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'player_name',
+                message: 'Nom du joueur',
+            },
+            {
+                type: "input",
+                name: "player_mail",
+                message: "Email",
+                validate: function(email)
+                {
+                    // Regex mail check (return true if valid mail)
+                    return /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()\.,;\s@\"]+\.{0,1})+([^<>()\.,;:\s@\"]{2,}|[\d\.]+))$/.test(email);
+                }
+            },
+        ])
+        .then(answer => {
+            console.log(`Nouveau joueur : ${answer.player_name}, mail : ${answer.player_mail}`)
+            start();
+        }
+        )
+    }
+
+async function start() {
+    await inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'init',
+                message: 'Bienvenue, merci de bien vouloir entregistrer les nouveaux joueurs avant de lancer une partie',
+                choices: ['Nouveau joueur', 'Commencer']
+            },
+        ])
+        .then(answers => {
+            switch (answers.init) {
+                case 'Nouveau joueur':
+                    newPlayer();
+                    break;
+                case 'Commencer':
+                    startGame();
+                    break;
+            }
+        });
+}
 
 const players: Array<string> = ["Player1", "Player2", "Player3", "Player4", "Player5", "Player6"];
 
@@ -13,7 +63,7 @@ async function newGame(){
             },
         ])
         .then(answers => {
-            switch(answers.game){
+            switch (answers.game) {
                 case 'Tour du Monde':
                     console.info(`You start Tour du Monde.`);
                     gameSelected();
