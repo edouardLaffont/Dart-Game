@@ -7,6 +7,7 @@ export const GameSchema = new mongoose.Schema({
         default: Date.now,
     },
     player: {
-        
+        type: mongoose.Schema.Types.ObjectId,
+    ref: 'Player',
     }
 })
