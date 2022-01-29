@@ -1,8 +1,8 @@
 import { Document } from 'mongoose';
-import { Player } from './player.type';
+import { GamePlayer } from './game-player.type';
 
 export interface Game extends Document {
   nbPlayer: Number,
-  player: Player,
+  gamePlayer: GamePlayer,
   created: Date;
 }

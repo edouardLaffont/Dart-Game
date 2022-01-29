@@ -5,6 +5,10 @@ export const PlayerSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Game'
     },
+    playerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Player'
+    },
     remainingShots: Number,
     rank: null || Number,
     order: null || Number,

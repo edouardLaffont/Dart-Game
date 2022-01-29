@@ -11,4 +11,4 @@ import { GameService } from '../services/game.service';
   providers: [GameService],
   controllers: [GameController],
 })
-export class ProductModule {}
+export class GameModule {}
