@@ -1,12 +1,18 @@
 import inquirer from "inquirer";
-import Player from './player'
+import Player from './player';
+import GamePlayer from './gamePlayer';
+import Game from './game';
+import ArroundTheWorld from './gamemodes/arroundTheWorld';
+import Cricket from './gamemodes/cricket';
+import TroisCentUn from "./gamemodes/troisCentUn";
 
 export default class Engine {
-    players: Array<Player> = [];
+    _players: Array<Player> = [new Player(1, 'coco', 'coco'), new Player(2, 'ed', 'ed')];
+    _game: Game = new Game(0);
 
-   addPlayer(player: Player): void {
-    this.players.push(player)
-   } 
+    addPlayer(player: Player): void {
+        this._players.push(player)
+    } 
 
     async start(): Promise<void>{
         await inquirer
@@ -34,6 +40,11 @@ export default class Engine {
         await inquirer
             .prompt([
                 {
+                    type: "input",
+                    name: "player_id",
+                    message: "Id",
+                },
+                {
                     type: 'input',
                     name: 'player_name',
                     message: 'Nom du joueur',
@@ -46,14 +57,13 @@ export default class Engine {
                     {
                         return /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()\.,;\s@\"]+\.{0,1})+([^<>()\.,;:\s@\"]{2,}|[\d\.]+))$/.test(email);
                     }
-                },
+                }
             ])
             .then(answer => {
-                this.addPlayer(new Player(answer.player_name, answer.player_mail))
+                this.addPlayer(new Player(answer.player_id, answer.player_name, answer.player_mail))
                 console.log(`Nouveau joueur : ${answer.player_name}, mail : ${answer.player_mail}`)
                 this.start();
-            }
-            )
+            })
     }
     
 
@@ -70,18 +80,20 @@ export default class Engine {
             .then(answers => {
                 switch (answers.game) {
                     case 'Tour du Monde':
-                        console.info(`You start Tour du Monde.`);
-                        this.gameSelected();
+                        this._game = new ArroundTheWorld(1);
                         break;
                     case '301':
-                        console.info(`You start 301.`);
-                        this.gameSelected();
+                        this._game = new TroisCentUn(2);
                         break;
                     case 'Cricket':
-                        console.info(`You start Cricket.`);
-                        this.gameSelected();
+                        this._game = new Cricket(3);
+                        break;
+                    default:
+                        console.log('Error: this game does not exist.')
+                        this.newGame();
                         break;
                 }
+                this.gameSelected();
             });
     }
     
@@ -127,17 +139,69 @@ export default class Engine {
                     type: 'checkbox',
                     name: 'players',
                     message: 'Select your players?',
-                    choices: this.players,
+                    choices: this._players.map((player) => {
+                        return {name: player._name, value: player}
+                    }),
                 },
             ])
             .then(answer => {
-                const players: Array<string> = answer.players
-                if(players.length == nbPlayers) {
-                    console.log(players)
+                if(answer.players.length == nbPlayers) {
+                    answer.players.forEach((player: Player, index: number) => {
+                        this._game.addPlayer(new GamePlayer(index, player.getId(), this._game.getId()));
+                    });
+                    this.gameName()
                 } else {
                     console.log(`Please select exactly ${nbPlayers} players.`)
                     this.selectPlayers(nbPlayers)
                 }
             })
+    }
+
+    async gameName(): Promise<void> {
+        await inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    name: 'gameName',
+                    message: 'Give a game name: ',
+                    choices: this._players,
+                },
+            ])
+            .then(answer => {
+                this._game.setName(answer.gameName);
+                this.playing();
+            })
+    }
+
+    async playing(): Promise<void> {
+        await inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    name: 'points',
+                    message: `${this.getCurrentPlayer()._name}, please enter your score: `,
+                    choices: this._players,
+                },
+            ])
+            .then(answer => {
+                try {
+                    this._game.shoot(answer.points, 0);
+                    if(this._game.getStatus() !== 'ended'){
+                        this.playing()
+                    } else {
+                        console.log(`Congrate ${this.getCurrentPlayer()._name}, you win !`)
+                        this.start()
+                    }
+                } catch (e) {
+                    console.log('Shoot missed')
+                    this.playing()
+                }
+                
+            })
+    }
+
+    getCurrentPlayer(): Player {
+        const currentPlayer: Player = this._players.find(p => p._id === this._game.getCurrentPlayer().getPlayerId())!
+        return currentPlayer;
     }
 }
