@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 
 import { Game } from '../types/game.type';
 import { CreateGameDTO, UpdateGameDTO } from '../Dto/game.dto';
+import { GamePlayer } from '../types/game-player.type'
 import { GameService } from '../services/game.service';
 
 
@@ -21,8 +22,8 @@ export class GameController {
   }
 
   @Post()
-   async createGame(@Body() game: CreateGameDTO): Promise<Game> {
-    return await this.gameService.create(game)
+   async createGame(@Body() game: CreateGameDTO, @Body() gamePlayer: GamePlayer): Promise<Game> {
+    return await this.gameService.create(game, gamePlayer)
   }
 
   @Delete(':id')
