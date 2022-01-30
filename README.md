@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-# Dart-Game
-
-Branche fonctionelle : master
-=======
 ## Installation
 
 ```bash
